@@ -1,0 +1,148 @@
+/* table.css */
+
+.table-container {
+  padding: 20px;
+  background: #f9f9f9;
+  min-height: 100vh;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.table-container h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #34495e;
+}
+.table-container h2 span {
+  color: #3498db;
+}
+
+.table-top {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.table-top input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  width: 220px;
+  outline: none;
+  transition: border 0.3s;
+  margin-right: 10px;
+}
+.table-top input:focus {
+  border-color: #3498db;
+}
+
+/* Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.table th,
+.table td {
+  padding: 12px 15px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.table th {
+  background: #f4f6f9;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.table tr:hover {
+  background: #f9fcff;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  justify-content: center; /* center align in cell */
+  gap: 10px;
+}
+
+.icon-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 18px; /* thoda bada icons ke liye */
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+button {
+  width:auto;
+  padding: 14px;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+
+/* Individual action colors */
+.icon-btn.view {
+  color: #3498db;
+}
+.icon-btn.edit {
+  color: #f1c40f;
+}
+.icon-btn.delete {
+  color: #e74c3c;
+}
+
+/* Hover effect */
+.icon-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: scale(1.1);
+}
+
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  font-size: 14px;
+  color: #34495e;
+}
+
+.page-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.page-buttons button {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.page-buttons button:hover {
+  background: #3498db;
+  color: #fff;
+}
+
+.page-buttons button.active {
+  background: #3498db;
+  color: #fff;
+  font-weight: bold;
+}
