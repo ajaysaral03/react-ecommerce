@@ -9,7 +9,7 @@ import EditCustomer from "./pages/dashboard/EditCustomer";
 import Categories from "./pages/categories/Categories";
 import AddCategory from "./pages/categories/AddCategory";
 import EditCategory from "./pages/categories/EditCategory";
-import Subcategories from "./pages/subcategories/SubCategories"; 
+import Subcategories from "./pages/subcategories/Subcategories"; 
 import AddSubcategory from "./pages/subcategories/AddSubcategory"; 
 import EditSubcategory from "./pages/subcategories/EditSubcategory"; 
 import Products from "./pages/products/Products"; 
