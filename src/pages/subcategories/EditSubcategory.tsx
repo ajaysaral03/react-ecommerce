@@ -11,6 +11,7 @@ interface Category {
 interface SubcategoryForm {
   name: string;
   categoryId: string;
+  status: number; // ✅ Added
 }
 
 const EditSubcategory = () => {
@@ -20,6 +21,7 @@ const EditSubcategory = () => {
   const [form, setForm] = useState<SubcategoryForm>({
     name: "",
     categoryId: "",
+    status: 1, // ✅ default active
   });
   const [error, setError] = useState("");
 
@@ -33,7 +35,13 @@ const EditSubcategory = () => {
     // Fetch subcategory details
     fetch(`http://localhost:8081/api/subcategories/${id}`)
       .then((res) => res.json())
-      .then((data: SubcategoryForm) => setForm(data))
+      .then((data) => {
+        setForm({
+          name: data.name,
+          categoryId: data.categoryId || data.category_id, // normalize
+          status: data.status ?? 1, // default 1 if not found
+        });
+      })
       .catch((err) => console.error("Error fetching subcategory:", err));
   }, [id]);
 
@@ -77,6 +85,7 @@ const EditSubcategory = () => {
         {error && <p className="error">{error}</p>}
 
         <form onSubmit={handleSubmit}>
+          {/* Subcategory Name */}
           <div className="mb-3">
             <label htmlFor="name">Subcategory Name</label>
             <input
@@ -91,6 +100,7 @@ const EditSubcategory = () => {
             />
           </div>
 
+          {/* Category */}
           <div className="mb-3">
             <label htmlFor="categoryId">Category</label>
             <select
@@ -107,6 +117,22 @@ const EditSubcategory = () => {
                   {cat.name}
                 </option>
               ))}
+            </select>
+          </div>
+
+          {/* Status */}
+          <div className="mb-3">
+            <label htmlFor="status">Status</label>
+            <select
+              id="status"
+              name="status"
+              value={form.status}
+              onChange={handleChange}
+              className="form-select"
+              required
+            >
+              <option value={1}>Active</option>
+              <option value={0}>Inactive</option>
             </select>
           </div>
 

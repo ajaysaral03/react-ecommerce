@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import "../../assets/css/form.css";
 
@@ -24,8 +24,10 @@ interface ProductForm {
   status: "active" | "inactive";
 }
 
-const AddProduct = () => {
+const EditProduct = () => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
   const [form, setForm] = useState<ProductForm>({
     name: "",
     description: "",
@@ -37,6 +39,7 @@ const AddProduct = () => {
   });
 
   const [image, setImage] = useState<File | null>(null);
+  const [currentImage, setCurrentImage] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [error, setError] = useState<string>("");
@@ -46,7 +49,7 @@ const AddProduct = () => {
     fetch("http://localhost:8081/api/categories")
       .then((res) => res.json())
       .then((data: Category[]) => setCategories(data))
-      .catch((err) => console.error(err));
+      .catch((err) => console.error("Error fetching categories:", err));
   }, []);
 
   // Fetch subcategories
@@ -54,8 +57,28 @@ const AddProduct = () => {
     fetch("http://localhost:8081/api/subcategories")
       .then((res) => res.json())
       .then((data: Subcategory[]) => setSubcategories(data))
-      .catch((err) => console.error(err));
+      .catch((err) => console.error("Error fetching subcategories:", err));
   }, []);
+
+  // Fetch existing product
+  useEffect(() => {
+    if (!id) return;
+    fetch(`http://localhost:8081/api/products/${id}`)
+      .then((res) => res.json())
+      .then((data: any) => {
+        setForm({
+          name: data.name || "",
+          description: data.description || "",
+          price: data.price || 0,
+          stock: data.stock || 0,
+          categoryId: data.categoryId || "",
+          subCategoryId: data.subCategoryId || "",
+          status: data.status || "active",
+        });
+        setCurrentImage(data.image || null);
+      })
+      .catch((err) => console.error("Error fetching product:", err));
+  }, [id]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -69,7 +92,7 @@ const AddProduct = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setImage(e.target.files[0]); // Set selected file
+      setImage(e.target.files[0]);
     }
   };
 
@@ -84,25 +107,23 @@ const AddProduct = () => {
     try {
       const formData = new FormData();
       formData.append("data", new Blob([JSON.stringify(form)], { type: "application/json" }));
-      if (image) {
-        formData.append("file", image);
-      }
+      if (image) formData.append("file", image);
 
-      const res = await fetch("http://localhost:8081/api/products", {
-        method: "POST",
-        body: formData, // multipart/form-data
+      const res = await fetch(`http://localhost:8081/api/products/${id}`, {
+        method: "PUT",
+        body: formData,
       });
 
       if (res.ok) {
         Swal.fire({
           icon: "success",
-          title: "Product Added!",
-          text: "The product has been added successfully.",
+          title: "Product Updated!",
+          text: "The product has been updated successfully.",
           confirmButtonText: "OK",
         }).then(() => navigate("/dashboard/products"));
       } else {
         const data = await res.json().catch(() => ({}));
-        setError(data.message || "Failed to add product");
+        setError(data.message || "Failed to update product");
       }
     } catch (err: any) {
       console.error(err);
@@ -119,69 +140,94 @@ const AddProduct = () => {
       <div className="row justify-content-center">
         <div className="col-md-8">
           <div className="form-container">
-            <h2>Add New Product</h2>
+            <h2>Edit Product</h2>
             {error && <p className="error">{error}</p>}
+
             <form onSubmit={handleSubmit}>
-              <label>
-                Name:
+              <div className="mb-3">
+                <label>Name:</label>
                 <input
                   type="text"
                   name="name"
                   value={form.name}
                   onChange={handleChange}
+                  className="form-control"
                   placeholder="Enter product name"
                   required
                 />
-              </label>
+              </div>
 
-              <label>
-                Description:
-                <input
+              <div className="mb-3">
+                <label>Description:</label>
+                <textarea
                   name="description"
                   value={form.description}
                   onChange={handleChange}
+                  className="form-control"
                   placeholder="Enter product description"
                 />
-              </label>
+              </div>
 
-              <label>
-                Price:
+              <div className="mb-3">
+                <label>Price:</label>
                 <input
                   type="number"
                   name="price"
                   value={form.price}
                   onChange={handleChange}
+                  className="form-control"
                   min={0}
                   step={0.01}
                 />
-              </label>
+              </div>
 
-              <label>
-                Stock:
+              <div className="mb-3">
+                <label>Stock:</label>
                 <input
                   type="number"
                   name="stock"
                   value={form.stock}
                   onChange={handleChange}
+                  className="form-control"
                   min={0}
                 />
-              </label>
+              </div>
 
-              <label>
-                Image:
+              <div className="mb-3">
+                <label>Change Image:</label>
                 <input
                   type="file"
                   name="image"
                   onChange={handleFileChange}
+                  className="form-control"
                 />
-              </label>
+              </div>
 
-              <label>
-                Category:
+              {currentImage && (
+                <div className="mb-3">
+                  <label>Current Image:</label>
+                  <div>
+                    <img
+                      src={`http://localhost:8081${currentImage}`}
+                      alt={form.name}
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        objectFit: "cover",
+                        borderRadius: "5px",
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="mb-3">
+                <label>Category:</label>
                 <select
                   name="categoryId"
                   value={form.categoryId}
                   onChange={handleChange}
+                  className="form-select"
                   required
                 >
                   <option value="">Select category</option>
@@ -191,14 +237,15 @@ const AddProduct = () => {
                     </option>
                   ))}
                 </select>
-              </label>
+              </div>
 
-              <label>
-                Subcategory:
+              <div className="mb-3">
+                <label>Subcategory:</label>
                 <select
                   name="subCategoryId"
                   value={form.subCategoryId}
                   onChange={handleChange}
+                  className="form-select"
                   required
                 >
                   <option value="">Select subcategory</option>
@@ -208,21 +255,24 @@ const AddProduct = () => {
                     </option>
                   ))}
                 </select>
-              </label>
+              </div>
 
-              <label>
-                Status:
+              <div className="mb-3">
+                <label>Status:</label>
                 <select
                   name="status"
                   value={form.status}
                   onChange={handleChange}
+                  className="form-select"
                 >
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
                 </select>
-              </label>
+              </div>
 
-              <button type="submit">Add Product</button>
+              <button type="submit" className="btn btn-success">
+                Update Product
+              </button>
             </form>
           </div>
         </div>
@@ -231,4 +281,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default EditProduct;

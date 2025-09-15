@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
-  base: "/reactecommerce/",
-  plugins: [react()]
-})
+  plugins: [react()],
+  base: "/react-ecommerce/", // 👈 yeh repo name ke hisaab se fix hai
+});

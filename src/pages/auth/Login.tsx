@@ -24,19 +24,21 @@ const Login = () => {
         body: JSON.stringify(form),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errData = await response.json();
-        setError(errData.message || "Login failed");
+        setError(data.message || "Login failed");
         return;
       }
 
-      const data = await response.json();
       console.log("Login successful:", data);
 
-      // You can store token if your backend returns JWT
-      // localStorage.setItem("token", data.token);
+      // ✅ user + token save
+      localStorage.setItem("user", JSON.stringify(data.data));
+      localStorage.setItem("token", data.data.token);
 
-      navigate("/dashboard");
+      // ✅ सबको common dashboard पर redirect
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       console.error("Login error:", err);
       setError("Something went wrong. Try again.");

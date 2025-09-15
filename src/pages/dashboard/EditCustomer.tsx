@@ -122,8 +122,8 @@ const EditCustomer = () => {
           required
         >
           <option value="admin">Admin</option>
+          <option value="user">User</option>
           <option value="customer">Customer</option>
-          <option value="staff">Staff</option>
         </select>
 
 

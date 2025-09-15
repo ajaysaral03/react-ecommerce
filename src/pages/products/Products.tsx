@@ -12,6 +12,7 @@ interface Product {
   stock: number;
   categoryName: string;
   subCategoryName: string;
+  image?: string; // ✅ image added
 }
 
 const ProductsTable = () => {
@@ -99,6 +100,7 @@ const ProductsTable = () => {
             <th>Name</th>
             <th>Category</th>
             <th>Subcategory</th>
+            <th>Image</th> 
             <th>Price</th>
             <th>Stock</th>
             <th>Actions</th>
@@ -112,6 +114,29 @@ const ProductsTable = () => {
                 <td>{prod.name}</td>
                 <td>{prod.categoryName}</td>
                 <td>{prod.subCategoryName}</td>
+                                <td>
+                  {prod.image ? (
+                    <a
+                      href={`http://localhost:8081${prod.image}`} 
+                      target="_blank" // new tab
+                      rel="noopener noreferrer" 
+                    >
+                      <img
+                        src={`http://localhost:8081${prod.image}`} 
+                        alt={prod.name}
+                        style={{
+                          width: "60px",
+                          height: "60px",
+                          objectFit: "cover",
+                          borderRadius: "5px",
+                          cursor: "pointer"
+                        }}
+                      />
+                    </a>
+                  ) : (
+                    <span>No Image</span>
+                  )}
+                </td>
                 <td>₹{prod.price}</td>
                 <td>{prod.stock}</td>
                 <td className="actions">
@@ -132,7 +157,7 @@ const ProductsTable = () => {
             ))
           ) : (
             <tr>
-              <td colSpan={7} style={{ textAlign: "center", padding: "12px" }}>
+              <td colSpan={8} style={{ textAlign: "center", padding: "12px" }}>
                 No products found
               </td>
             </tr>

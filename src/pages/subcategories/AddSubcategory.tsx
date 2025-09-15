@@ -11,6 +11,7 @@ interface Category {
 interface SubcategoryForm {
   name: string;
   categoryId: string;
+  status: number; // ✅ status add
 }
 
 const AddSubcategory = () => {
@@ -19,6 +20,7 @@ const AddSubcategory = () => {
   const [form, setForm] = useState<SubcategoryForm>({
     name: "",
     categoryId: "",
+    status: 1, // ✅ default active
   });
   const [error, setError] = useState("");
 
@@ -32,7 +34,14 @@ const AddSubcategory = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // ✅ status हमेशा number रहे
+    if (name === "status") {
+      setForm({ ...form, [name]: Number(value) });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,7 +55,7 @@ const AddSubcategory = () => {
       const res = await fetch("http://localhost:8081/api/subcategories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(form), // ✅ status भी जाएगा
       });
 
       if (res.ok) {
@@ -77,7 +86,7 @@ const AddSubcategory = () => {
             <form onSubmit={handleSubmit}>
               <div className="row">
                 {/* Subcategory Name */}
-                <div className="col-md-6 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">Subcategory Name</label>
                   <input
                     type="text"
@@ -90,7 +99,7 @@ const AddSubcategory = () => {
                 </div>
 
                 {/* Category */}
-                <div className="col-md-6 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">Category</label>
                   <select
                     name="categoryId"
@@ -104,6 +113,20 @@ const AddSubcategory = () => {
                         {cat.name}
                       </option>
                     ))}
+                  </select>
+                </div>
+
+                {/* Status */}
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">Status</label>
+                  <select
+                    name="status"
+                    value={form.status}
+                    onChange={handleChange}
+                    className="form-select"
+                  >
+                    <option value={1}>Active</option>
+                    <option value={0}>Inactive</option>
                   </select>
                 </div>
               </div>
